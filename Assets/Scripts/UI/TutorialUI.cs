@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEditor.Search;
 using UnityEngine;
-
+/// <summary>
+/// 教程UI
+/// </summary>
 public class TutorialUI : MonoBehaviour
 {
-
     [SerializeField] private TextMeshProUGUI keyMoveUpText;
     [SerializeField] private TextMeshProUGUI keyMoveDownText;
     [SerializeField] private TextMeshProUGUI keyMoveLeftText;
@@ -28,23 +29,36 @@ public class TutorialUI : MonoBehaviour
         UpdateVisual();
 
         Show();
-
-
     }
-
+    
+    /// <summary>
+    /// 游戏对象管理器_游戏状态改变事件处理器
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void KitchenGameManager_OnStateChanged(object sender, EventArgs e)
     {
+        //若倒计时开始
         if (KitchenGameManager.Instance.IsCountdownToStartActive())
-        {
+        {   
+            //隐藏教程UI
             Hide();
         }
     }
-
+    
+    /// <summary>
+    /// 游戏输入_按键重绑定事件处理器
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void GameInput_OnBindingRebind(object sender, EventArgs e)
     {
         UpdateVisual();
     }
-
+    
+    /// <summary>
+    /// 更新输入绑定按键的文本显示
+    /// </summary>
     private void UpdateVisual()
     {
         keyMoveUpText.text = GameInput.Instance.GetBindingText(GameInput.Binding.Move_Up);

@@ -4,32 +4,61 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using UnityEngine;
 using UnityEngine.Serialization;
-
+/// <summary>
+/// 玩家类
+/// </summary>
 public class Player : MonoBehaviour,IKitchenObjectParent
 {
-
     public static Player Instance { get; private set; }
 
     /// <summary>
     /// 拾取时播放音效
     /// </summary>
     public event EventHandler OnPickedSomething;
-   
+    
+    /// <summary>
+    /// 选中的操作台改变时的事件
+    /// </summary>
     public event EventHandler<OnSelectedCounterChangedEventArgs> OnSelectedCounterChanged;
+    /// <summary>
+    /// 选中的操作台改变时的事件参数
+    /// </summary>
     public class OnSelectedCounterChangedEventArgs : EventArgs
     {
+        /// <summary>
+        /// 选择的操作台
+        /// </summary>
         public BaseCounter selectedCounter;
     }
     
-    
     [SerializeField] private float movdSpeed = 7f;
     [SerializeField] private GameInput gameInput;
+
+    /// <summary>
+    /// 操作台碰撞层级
+    /// </summary>
     [SerializeField] private LayerMask countersLayerMask; 
+
+    /// <summary>
+    /// 炊事对象持有的位置
+    /// </summary>
     [SerializeField] private Transform kitchenObjectHoldPoint;
     
     private bool isWalking;
+
+    /// <summary>
+    /// 最近一次的互动方向
+    /// </summary>
     private Vector3 lastInteractDir;
+
+    /// <summary>
+    /// 玩家选中的操作台
+    /// </summary>
     private BaseCounter selectedCounter;
+
+    /// <summary>
+    /// 玩家持有的炊事对象
+    /// </summary>
     private KitchenObject kitchenObject;
     
 
@@ -64,6 +93,11 @@ public class Player : MonoBehaviour,IKitchenObjectParent
         }
     }
     
+    /// <summary>
+    /// 第二互动事件处理函数
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void GameInput_OnInteractAlternateAction(object sender, EventArgs e)
     {
         if (!KitchenGameManager.Instance.IsGamePlaying()) return;
@@ -80,26 +114,27 @@ public class Player : MonoBehaviour,IKitchenObjectParent
         HandleInteractions();
     }
 
+    /// <summary>
+    /// 玩家是否存在行走
+    /// </summary>
+    /// <returns></returns>
     public bool IsWalking() => isWalking;
 
     /// <summary>
-    /// 处理互动
+    /// 处理玩家与操作台的互动
     /// </summary>
     private void HandleInteractions()
     {
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-        
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         if (moveDir != Vector3.zero)
         {
             lastInteractDir = moveDir;
         }
-
         float interactDistance = 2f;
-        
-        
-        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance,countersLayerMask))
+
+        if (Physics.Raycast(transform.position, lastInteractDir, out RaycastHit raycastHit, interactDistance, countersLayerMask))
         {
             if (raycastHit.transform.TryGetComponent(out BaseCounter baseCounter))
             {
@@ -117,24 +152,21 @@ public class Player : MonoBehaviour,IKitchenObjectParent
         {
             SetSelectedCounter(null);
         }
-       
     }
     
-
     /// <summary>
     /// 处理玩家移动
     /// </summary>
     private void HandleMovement()
     {
-        
         Vector2 inputVector = gameInput.GetMovementVectorNormalized();
-
         Vector3 moveDir = new Vector3(inputVector.x, 0f, inputVector.y);
 
         float moveDistance = movdSpeed * Time.deltaTime;
         float playerHeight = 2f;
         float playerRadius = 0.7f;
-
+        
+        //向移动方向投射胶囊体判断能否向前移动
         bool canMove = !Physics.CapsuleCast(transform.position, transform.position + Vector3.up * playerHeight,
             playerRadius, moveDir, moveDistance);
 
@@ -168,22 +200,28 @@ public class Player : MonoBehaviour,IKitchenObjectParent
                 }
             }
         }
-
+        
+        //玩家移动
         if (canMove)
             transform.position += moveDir * moveDistance;
 
         isWalking = moveDir != Vector3.zero;
 
         float rotateSpeed = 10f;
+        //玩家逐步旋转至面朝移动方向
         transform.forward = Vector3.Slerp(transform.forward, moveDir, Time.deltaTime * rotateSpeed);
     }
-
+    
+    /// <summary>
+    /// 设置选中玩家靠近的操作台
+    /// </summary>
+    /// <param name="selectedCounter"></param>
     private void SetSelectedCounter(BaseCounter selectedCounter)
     {
         this.selectedCounter = selectedCounter;
         OnSelectedCounterChanged?.Invoke(this,new OnSelectedCounterChangedEventArgs(){selectedCounter = selectedCounter});
     }
-
+    
     public Transform GetKitchenObjectFollowTransform() => kitchenObjectHoldPoint;
 
     public void SetKitchenObject(KitchenObject kitchenObject)
@@ -198,6 +236,4 @@ public class Player : MonoBehaviour,IKitchenObjectParent
     public void ClearKitchenObject() => kitchenObject = null;
 
     public bool HasKitchenObject() => kitchenObject != null;
-
-   
 }

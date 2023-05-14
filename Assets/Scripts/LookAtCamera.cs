@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
-/// 血条的面朝向设置
+/// UI的面朝向设置
 /// </summary>
 public class LookAtCamera : MonoBehaviour
 {
@@ -14,7 +14,6 @@ public class LookAtCamera : MonoBehaviour
         LookAtInverted,
         CameraForward,
         CameraForwardInverted,
-        
     }
 
     [SerializeField] private Mode mode;

@@ -2,13 +2,22 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 音乐管理器
+/// </summary>
 public class MusicManager : MonoBehaviour
 {
+    /// <summary>
+    /// 预设置音量的大小
+    /// </summary>
     private const string PLAYER_PREFS_MUSIC_VOLUME = "MusicVolume";
     public static MusicManager Instance { get; private set; }
 
     private AudioSource audioSource;
-
+    
+    /// <summary>
+    /// 音乐音量
+    /// </summary>
     private float volume = .3f;
 
     private void Awake()
@@ -21,6 +30,9 @@ public class MusicManager : MonoBehaviour
         audioSource.volume = volume;
     }
 
+    /// <summary>
+    /// 改变音量
+    /// </summary>
     public void ChangeVolume()
     {
         volume += .1f;
@@ -33,7 +45,11 @@ public class MusicManager : MonoBehaviour
         PlayerPrefs.SetFloat(PLAYER_PREFS_MUSIC_VOLUME, volume);
         PlayerPrefs.Save();
     }
-
+    
+    /// <summary>
+    /// 获取音量
+    /// </summary>
+    /// <returns></returns>
     public float GetVolume()
     {
         return volume;

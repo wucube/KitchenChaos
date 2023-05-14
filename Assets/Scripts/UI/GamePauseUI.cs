@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 游戏暂停UI
+/// </summary>
 public class GamePauseUI : MonoBehaviour
 {
     [SerializeField] private Button resumeButton;
@@ -16,17 +19,18 @@ public class GamePauseUI : MonoBehaviour
         {
             KitchenGameManager.Instance.TogglePauseGame();
         });
+
         mainMenuButton.onClick.AddListener(() =>
         {
             Loader.Load(Loader.Scene.MainMenuScene);
         });
+
         optionsButton.onClick.AddListener(() =>
         {
             Hide();
             OptionsUI.Instance.Show(Show);
         });
     }
-
 
     private void Start()
     { 
@@ -35,12 +39,22 @@ public class GamePauseUI : MonoBehaviour
 
         Hide();
     }
-
+    
+    /// <summary>
+    /// 游戏管理器_结束暂停事件处理器
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void KitchenGameManager_OnGameUpaused(object sender, EventArgs e)
     {
         Hide();
     }
-
+    
+    /// <summary>
+    /// 游戏管理器_暂停事件处理器
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="e"></param>
     private void KitchenGameManager_OnGamePaused(object sender, EventArgs e)
     {
         Show();

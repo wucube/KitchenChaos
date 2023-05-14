@@ -5,6 +5,9 @@ using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
+/// <summary>
+/// 选项UI
+/// </summary>
 public class OptionsUI : MonoBehaviour
 {
     public static OptionsUI Instance { get; private set; }
@@ -16,10 +19,28 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private Button moveDownButton;
     [SerializeField] private Button moveLeftButton;
     [SerializeField] private Button moveRightButton;
+
+    /// <summary>
+    /// 互动按钮
+    /// </summary>
     [SerializeField] private Button interactButton;
+    
+    /// <summary>
+    /// 第二互动按钮
+    /// </summary>
     [SerializeField] private Button interactAlternateButton;
+
+
     [SerializeField] private Button pauseButton;
+
+    /// <summary>
+    /// 手柄的互动按钮
+    /// </summary>
     [SerializeField] private Button gamepadInteractButton;
+
+    /// <summary>
+    /// 手柄的第二交互按钮
+    /// </summary>
     [SerializeField] private Button gamepadInteractAlternateButton;
     [SerializeField] private Button gamepadPauseButton;
     [SerializeField] private TextMeshProUGUI soundEffectsText;
@@ -34,9 +55,12 @@ public class OptionsUI : MonoBehaviour
     [SerializeField] private TextMeshProUGUI gamepadInteractText;
     [SerializeField] private TextMeshProUGUI gamepadInteractAlternateText;
     [SerializeField] private TextMeshProUGUI gamepadPauseText;
-
+    
+    /// <summary>
+    /// 按钮重绑的UI对象
+    /// </summary>
     [SerializeField] private Transform pressToRebindKeyTransform;
-
+    
     private Action onCloseButtonAction;
 
     private void Awake()
@@ -61,7 +85,6 @@ public class OptionsUI : MonoBehaviour
             onCloseButtonAction();
         });
 
-        //�����ذ�
         moveUpButton.onClick.AddListener(() =>{ RebindBinding(GameInput.Binding.Move_Up);});
         moveDownButton.onClick.AddListener(() => { RebindBinding(GameInput.Binding.Move_Down); });
         moveLeftButton.onClick.AddListener(() => { RebindBinding(GameInput.Binding.Move_Left); });
@@ -78,7 +101,6 @@ public class OptionsUI : MonoBehaviour
     {
         KitchenGameManager.Instance.OnGameUnpaused += KitchenGameManager_OnGameUnpaused;
 
-
         UpdateVisual();
 
         HidePressToRebindKey();
@@ -89,7 +111,10 @@ public class OptionsUI : MonoBehaviour
     {
         Hide();
     }
-
+    
+    /// <summary>
+    /// 更新视觉内容
+    /// </summary>
     private void UpdateVisual()
     {
         soundEffectsText.text = "Sound Effects: " + Mathf.Round(SoundManager.Instance.GetVolume() * 10f);
@@ -118,7 +143,10 @@ public class OptionsUI : MonoBehaviour
     {
         gameObject.SetActive(false);
     }
-
+    
+    /// <summary>
+    /// 显示 按键重绑UI
+    /// </summary>
     private void ShowPressToRebindKey()
     {
         pressToRebindKeyTransform.gameObject.SetActive(true);
@@ -128,7 +156,11 @@ public class OptionsUI : MonoBehaviour
     {
         pressToRebindKeyTransform.gameObject.SetActive(false);
     }
-
+    
+    /// <summary>
+    /// 按钮重绑定
+    /// </summary>
+    /// <param name="binding"></param>
     private void RebindBinding(GameInput.Binding binding)
     {
         ShowPressToRebindKey();

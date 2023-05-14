@@ -4,6 +4,9 @@ using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
 
+/// <summary>
+/// 主菜单UI
+/// </summary>
 public class MainMenuUI : MonoBehaviour
 {
     [SerializeField] private Button playButton;

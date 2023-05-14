@@ -4,6 +4,9 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
+/// <summary>
+/// 游戏输入
+/// </summary>
 public class GameInput : MonoBehaviour
 {
 
@@ -11,14 +14,28 @@ public class GameInput : MonoBehaviour
 
     public static GameInput Instance { get; private set; }
 
+    /// <summary>
+    /// 互动操作事件
+    /// </summary>
     public event EventHandler OnInteractAction;
+
+    /// <summary>
+    /// 互动交替操作事件
+    /// </summary>
     public event EventHandler OnInteractAlternateAction;
+
+    /// <summary>
+    /// 暂停操作事件
+    /// </summary>
     public event EventHandler OnPauseAction;
     /// <summary>
     /// 按键重绑时的回调事件
     /// </summary>
     public event EventHandler OnBindingRebind;
 
+    /// <summary>
+    /// 输入绑定
+    /// </summary>
     public enum Binding
     {
         Move_Up,
@@ -33,12 +50,13 @@ public class GameInput : MonoBehaviour
         Gamepad_Pause,
     }
     
+    //玩家输入操作类
     private PlayerInputActions playerInputActions;
+
     private void Awake()
     {
         Instance = this;
 
-        //启用玩家输入动作表
         playerInputActions = new PlayerInputActions();
 
         if (PlayerPrefs.HasKey(PLAYER_PREFS_BINDINGS))
@@ -46,15 +64,13 @@ public class GameInput : MonoBehaviour
             playerInputActions.LoadBindingOverridesFromJson(PlayerPrefs.GetString(PLAYER_PREFS_BINDINGS));
         }
 
-
+        //启用玩家输入动作表
         playerInputActions.Player.Enable();
 
         playerInputActions.Player.Interact.performed += Interact_performed;
         playerInputActions.Player.InteractAlternate.performed += InteractAlternate_performed;
         playerInputActions.Player.Pause.performed += Pause_Performed;
 
-
-        
     }
 
     private void OnDestroy()
@@ -66,23 +82,37 @@ public class GameInput : MonoBehaviour
         playerInputActions.Dispose();
     }
 
-
+    /// <summary>
+    /// 暂停输入响应函数
+    /// </summary>
+    /// <param name="obj"></param>
     private void Pause_Performed(InputAction.CallbackContext obj)
     {
         OnPauseAction?.Invoke(this, EventArgs.Empty);
     }
-
+    
+    /// <summary>
+    /// 互动输入响应函数
+    /// </summary>
+    /// <param name="obj"></param>
     private void Interact_performed(InputAction.CallbackContext obj)
     {
         OnInteractAction?.Invoke(this,EventArgs.Empty);
     }
-
+    
+    /// <summary>
+    /// 互动交替输入响应函数
+    /// </summary>
+    /// <param name="obj"></param>
     private void InteractAlternate_performed(InputAction.CallbackContext obj)
     {
         OnInteractAlternateAction?.Invoke(this,EventArgs.Empty);
     }
 
-    
+    /// <summary>
+    /// 获取移动输入的归一化向量
+    /// </summary>
+    /// <returns></returns>
     public Vector2 GetMovementVectorNormalized()
     {
         Vector2 inputVector = playerInputActions.Player.Move.ReadValue<Vector2>();
@@ -111,10 +141,8 @@ public class GameInput : MonoBehaviour
         return inputVector;
     }
 
-
-
     /// <summary>
-    /// 获取按键绑定的键盘KEY值文本 InputSystem
+    /// 获取输入绑定的键盘KEY值文本 InputSystem
     /// </summary>
     /// <param name="binding"></param>
     /// <returns></returns>
@@ -143,7 +171,6 @@ public class GameInput : MonoBehaviour
                 return playerInputActions.Player.InteractAlternate.bindings[1].ToDisplayString();
             case Binding.Gamepad_Pause:
                 return playerInputActions.Player.Pause.bindings[1].ToDisplayString();
-
         }
     }
 
@@ -152,11 +179,12 @@ public class GameInput : MonoBehaviour
     /// </summary>
     /// <param name="binding">要重绑的操作</param>
     /// <param name="onActinRebound">重绑过程中的委托回调</param>
-    public void RebinBinding(Binding binding,Action onActinRebound)
+    public void RebinBinding(Binding binding, Action onActinRebound)
     {
         playerInputActions.Player.Disable();
 
         InputAction inputAction;
+
         int bindingIndex;
 
         switch (binding)
@@ -203,14 +231,14 @@ public class GameInput : MonoBehaviour
                 bindingIndex = 1;
                 break;
         }
-
+        
+        //输入动作重新绑定键盘按键
         inputAction.PerformInteractiveRebinding(bindingIndex).OnComplete(callback =>
         {
             callback.Dispose();
             playerInputActions.Player.Enable();
             onActinRebound();
-
-
+            
             PlayerPrefs.SetString(PLAYER_PREFS_BINDINGS, playerInputActions.SaveBindingOverridesAsJson());
             PlayerPrefs.Save();
 

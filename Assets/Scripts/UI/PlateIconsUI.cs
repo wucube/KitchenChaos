@@ -3,8 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// 盘子盛的食物的图标
+/// </summary>
 public class PlateIconsUI : MonoBehaviour
 {
+
     [SerializeField] private PlateKitchenObject plateKitchenObject;
     [SerializeField] private Transform iconTemplate;
 
@@ -22,7 +26,10 @@ public class PlateIconsUI : MonoBehaviour
     {
         UpdateVisual();
     }
-
+    
+    /// <summary>
+    /// 更新盘子旁的食物图标
+    /// </summary>
     private void UpdateVisual()
     {
         foreach(Transform child in transform)
